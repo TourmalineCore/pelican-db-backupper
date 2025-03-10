@@ -32,6 +32,4 @@ spec:
                   value: pelican-db-backup
                 - name: AWS_HOST
                   value: http://10.244.0.8:9000
-                - name: AWS_PORT
-                  value: '40110'
               imagePullPolicy: Never
