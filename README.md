@@ -46,7 +46,7 @@ Check your S3 bucket
 
 ### 2. Copy backup to the pod
 ```bash
-kubectl cp <bucket-name> postgresql-0:<path> -n local
+kubectl cp <backup-name> postgresql-0:<path> -n local
 ```
 ### Example
 ```bash
