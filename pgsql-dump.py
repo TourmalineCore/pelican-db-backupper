@@ -4,7 +4,7 @@ from datetime import datetime
 
 def main():
 
-    os.system('pg_dump -h $PG_HOST -U $PG_USER --encoding UTF8 --no-owner --no-privileges --format plain $PG_DATABASE > pgsql.sql')
+    os.system('pg_dump -h $PG_HOST -U $PG_USER --encoding UTF8 --format plain $PG_DATABASE > pgsql.sql')
 
 
     if os.path.exists('pgsql.sql'):
