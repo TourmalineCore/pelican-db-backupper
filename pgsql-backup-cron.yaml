@@ -3,6 +3,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: pgsql-backup-cron
+  namespace: local
 spec:
   schedule: "*/1 * * * *"
   successfulJobsHistoryLimit: 2
