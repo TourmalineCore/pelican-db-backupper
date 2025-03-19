@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - pgsql-backup
+      - feature/pgsql-backup
 
 env:
   GITHUB_REGISTRY: ghcr.io
