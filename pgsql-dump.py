@@ -4,11 +4,7 @@ from datetime import datetime
 
 def main():
 
-    pg_pass = os.getenv('PG_PASSWORD')    
-    pg_user = os.getenv('PG_USER')    
-    pg_db = os.getenv('PG_DATABASE')
-    pg_host = os.getenv('PG_HOST')
-    os.system('pg_dump -h ${pg_host} -U ${pg_user} --encoding UTF8 --format plain ${pg_database} > pgsql.sql')
+    os.system('pg_dump -h $PG_HOST -U $PG_USER --encoding UTF8 --format plain $PG_DATABASE > pgsql.sql')
 
 
     if os.path.exists('pgsql.sql'):
