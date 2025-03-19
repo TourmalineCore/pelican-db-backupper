@@ -22,7 +22,7 @@ spec:
                    secretKeyRef:
                       name: pgsql-backup-secret
                       key: PG_HOST
-                - name: PG_PASSWORD
+                - name: PGPASSWORD
                   valueFrom:
                    secretKeyRef:
                       name: pgsql-backup-secret
