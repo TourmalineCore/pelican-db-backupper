@@ -3,9 +3,7 @@ import boto3
 from datetime import datetime
 
 def main():
-
     os.system('pg_dump -h $PG_HOST -U $PG_USER --encoding UTF8 --format plain $PG_DATABASE > pgsql.sql')
-
 
     if os.path.exists('pgsql.sql'):
         source_path = 'pgsql.sql'
@@ -22,8 +20,6 @@ def upload_to_s3(source_path, destination_filename):
         aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
         endpoint_url=os.getenv('AWS_HOST'),
     )
-    s3.list_buckets()    
-    print(s3.list_buckets())
 
     bucket_name = os.getenv('AWS_BUCKET_NAME')
 
