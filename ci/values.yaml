@@ -34,7 +34,7 @@ readinessProbe:
 service:
   type: ClusterIP
   ports:
-    http: 3000
+    http: 3001
     https: ""
 
 ingress:
