@@ -6,7 +6,6 @@ def main():
 
     os.system('pg_dump -h $PG_HOST -U $PG_USER --encoding UTF8 --format plain $PG_DATABASE > pgsql.sql')
 
-
     if os.path.exists('pgsql.sql'):
         source_path = 'pgsql.sql'
 
