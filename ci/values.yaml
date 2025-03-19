@@ -2,14 +2,10 @@
 
 image:
   registry: ghcr.io
-  repository: tourmalinecore/pelican-cms
+  repository: tourmalinecore/pelican-db-backupper
   tag: "latest"
   pullPolicy: Always
   debug: true
-
-containerPorts:
-  http: 1337
-  https: ""
 
 replicaCount: 1
 
