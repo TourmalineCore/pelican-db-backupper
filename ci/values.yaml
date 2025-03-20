@@ -69,3 +69,63 @@ extraDeploy:
       {{- if .Values.extraConfigMapEnvVars }}
       {{- include "common.tplvalues.render" ( dict "value" .Values.extraConfigMapEnvVars "context" $ ) | trim | nindent 6 }}
       {{- end }}
+  - |
+    apiVersion: batch/v1
+    kind: CronJob
+    metadata:
+      name: pgsql-backup-cron
+      namespace: local
+    spec:
+      schedule: "*/1 * * * *"
+      successfulJobsHistoryLimit: 2
+      concurrencyPolicy: Replace
+      jobTemplate:
+        spec:
+          template:
+            spec:
+              restartPolicy: OnFailure
+              containers:
+                - name: pgsql-backup-cron
+                  image: pgsql-backup:0.0.1
+                  env:
+                    - name: PG_HOST
+                      valueFrom:
+                      secretKeyRef:
+                          name: pgsql-backup-secret
+                          key: PG_HOST
+                    - name: PGPASSWORD
+                      valueFrom:
+                      secretKeyRef:
+                          name: pgsql-backup-secret
+                          key: PG_PASSWORD
+                    - name: PG_USER
+                      valueFrom:
+                      secretKeyRef:
+                          name: pgsql-backup-secret
+                          key: PG_USER
+                    - name: PG_DATABASE
+                      valueFrom:
+                      secretKeyRef:
+                          name: pgsql-backup-secret
+                          key: PG_DATABASE
+                    - name: AWS_ACCESS_KEY_ID
+                      valueFrom:
+                      secretKeyRef:
+                          name: pgsql-backup-secret
+                          key: AWS_ACCESS_KEY_ID
+                    - name: AWS_SECRET_ACCESS_KEY
+                      valueFrom:
+                      secretKeyRef:
+                          name: pgsql-backup-secret
+                          key: AWS_SECRET_ACCESS_KEY
+                    - name: AWS_BUCKET_NAME
+                      valueFrom:
+                      secretKeyRef:
+                          name: pgsql-backup-secret
+                          key: AWS_BUCKET_NAME
+                    - name: AWS_HOST
+                      valueFrom:
+                      secretKeyRef:
+                          name: pgsql-backup-secret
+                          key: AWS_HOST
+                  imagePullPolicy: Never
