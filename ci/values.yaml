@@ -86,7 +86,7 @@ extraDeploy:
               restartPolicy: OnFailure
               containers:
                 - name: pgsql-backup-cron
-                  image: pgsql-backup:0.0.1
+                  image: ghcr.io/tourmalinecore/pelican-db-backupper:latest
                   env:
                     - name: PG_HOST
                       valueFrom:
