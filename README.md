@@ -1,6 +1,6 @@
 # pelican-db-backupper
 
-Больше информации и проекте и связанных репозиториях можно найти здесь: 
+Больше информации о проекте и связанных репозиториях можно найти здесь: 
 [pelican-documentation](https://github.com/TourmalineCore/pelican-documentation).
 
 ## Подготовка перед запуском
