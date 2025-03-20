@@ -1,62 +1,72 @@
-# PostgreSQL k8s backup & restore
+# pelican-db-backupper
 
-## Prerequisites
-1. Install Docker
-2. Prepared pelican-local-env project
+Больше информации и проекте и связанных репозиториях можно найти здесь: 
+[pelican-documentation](https://github.com/TourmalineCore/pelican-documentation).
 
-## Backup
-### 1. Build docker image 
+## Подготовка перед запуском
+1. Установите Docker
+2. Подготовьте проект pelican-local-env 
+
+## Настройка резервной копии при добавлении проекта вручную
+### 1. Соберите Docker образ 
 ```bash
 docker build -t pgsql-backup:0.0.1 .
 ```
-### 2. Load docker image into pelican cluster
+### 2. Загрузите Docker образ в кластер
 ```bash
 kind load docker-image pgsql-backup:0.0.1 --name pelican
 ```
-### 3. Configure CronJob pgsql-backup-cron.yaml
+### 3. Настройте секреты в pgsql-backup-secret.yaml
 ```bash
-- name: PG_HOST
-  value: 10.244.0.7
-- name: PGPASSWORD
-  value: admin
-- name: PG_USER
-  value: postgres
-- name: PG_DATABASE
-  value: pelican_db
-- name: AWS_ACCESS_KEY_ID
-  value: CbYUcMLdKB5ySRHmxmKS
-- name: AWS_SECRET_ACCESS_KEY
-  value: 6CRcWtYhx5ASQRvrjzMJVERcE04SD2ccTzNsVXHW
-- name: AWS_BUCKET_NAME
-  value: pelican-db-backup
-- name: AWS_HOST
-  value: http://10.244.0.8:9000
+    PG_HOST: "postgresql"
+    PG_PASSWORD: "admin"
+    PG_USER: "postgres"
+    PG_DATABASE: "pelican_db"
+    AWS_ACCESS_KEY_ID: "admin"
+    AWS_SECRET_ACCESS_KEY: "rootPassword"
+    AWS_BUCKET_NAME: "pelican-db-backup"
+    AWS_HOST: "http://minio-s3:9000"
 ```
-Change PG_HOST, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_BUCKET_NAME, AWS_HOST to your values
+Измените данные в секрете на свои
 
-### 4. Apply CronJob
+### 4. Примените файл CronJob
 ```bash
 kubectl apply -f pgsql-backup-cron.yaml
 ```
-Check your S3 bucket
+Убедитесь, что резервные копии сохраняются в S3 хранилище
 
-## Restore
+## Настройка резервной копии при добавлении проекта через helmfile
 
-### 1. Manually download backup from S3 and copy to your project
+### Создайте файл values и настройте в нем переменные
+```bash
+extraConfigMapEnvVars:
+  PG_HOST: "postgresql"
+  PGPASSWORD: "admin"
+  PG_USER: "postgres"
+  PG_DATABASE: "pelican_db"
+  AWS_ACCESS_KEY_ID: "admin"
+  AWS_SECRET_ACCESS_KEY: "rootPassword"
+  AWS_BUCKET_NAME: "pelican-db-backup"
+  AWS_HOST: "http://minio-s3:9000"
+```
 
-### 2. Copy backup to the pod
+## Восстановление из резервной копии
+
+### 1. Вручную скопируйте файл резервной копии из S3 хранилища в проект
+
+### 2. Скопируйте файл резервной копии в под базы данных
 ```bash
 kubectl cp <backup-name> postgresql-0:<path> -n local
 ```
-### Example
+### Пример
 ```bash
 kubectl cp pgsql.sql_2025.03.03.06_41UTC.backup postgresql-0:tmp/pgsql.sql_2025.03.03.06_41UTC.backup -n local
 ```
-### 3. Connect to the postgresql-0 pod and execute psql command to restore data
+### 3. Подключитесь к поду базы данных и выполните команду psql для восстановления базы данных
 ```bash
 kubectl exec -it postgresql-0 -n local -- psql -U postgres -d pelican_db -f <path>/<backup-name.backup>
 ```
-### Example
+### Пример
 ```bash
 kubectl exec -it postgresql-0 -n local -- psql -U postgres -d pelican_db -f tmp/pgsql.sql_2025.03.03.06_41UTC.backup
 ```
