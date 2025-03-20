@@ -8,7 +8,7 @@ def main():
     if os.path.exists('pgsql.sql'):
         source_path = 'pgsql.sql'
 
-        destination_filename = source_path + '_' + datetime.strftime(datetime.now(), "%Y.%m.%d.%H:%M") + 'UTC' + '.backup'
+        destination_filename = source_path + '_' + datetime.strftime(datetime.utcnow(), "%Y.%m.%d.%H:%M:%S") + 'UTC' + '.backup'
 
         upload_to_s3(source_path, destination_filename)
 
