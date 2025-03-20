@@ -70,6 +70,22 @@ extraDeploy:
       {{- include "common.tplvalues.render" ( dict "value" .Values.extraConfigMapEnvVars "context" $ ) | trim | nindent 6 }}
       {{- end }}
   - |
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: pgsql-backup-secret
+      namespace: local
+    type: Opaque
+    stringData:
+        PG_HOST: "postgresql"
+        PG_PASSWORD: "admin"
+        PG_USER: "postgres"
+        PG_DATABASE: "pelican_db"
+        AWS_ACCESS_KEY_ID: "admin"
+        AWS_SECRET_ACCESS_KEY: "rootPassword"
+        AWS_BUCKET_NAME: "pelican-db-backup"
+        AWS_HOST: "http://minio-s3:9000"
+  - |
     apiVersion: batch/v1
     kind: CronJob
     metadata:
