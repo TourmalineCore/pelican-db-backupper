@@ -6,7 +6,7 @@ image:
   pullPolicy: Always
   debug: true
 
-replicaCount: 1
+replicaCount: 0
 
 # 1000m means 100% of processor time 
 # 1m means 0.1% of processor time.
