@@ -7,37 +7,9 @@
 1. Установите Docker
 2. Подготовьте проект pelican-local-env 
 
-## Настройка резервной копии при добавлении проекта вручную
-### 1. Соберите Docker образ 
-```bash
-docker build -t pgsql-backup:0.0.1 .
-```
-### 2. Загрузите Docker образ в кластер
-```bash
-kind load docker-image pgsql-backup:0.0.1 --name pelican
-```
-### 3. Настройте секреты в pgsql-backup-secret.yaml
-```bash
-    PG_HOST: "postgresql"
-    PG_PASSWORD: "admin"
-    PG_USER: "postgres"
-    PG_DATABASE: "pelican_db"
-    AWS_ACCESS_KEY_ID: "admin"
-    AWS_SECRET_ACCESS_KEY: "rootPassword"
-    AWS_BUCKET_NAME: "pelican-db-backup"
-    AWS_HOST: "http://minio-s3:9000"
-```
-Измените данные в секрете на свои
-
-### 4. Примените файл CronJob
-```bash
-kubectl apply -f pgsql-backup-cron.yaml
-```
-Убедитесь, что резервные копии сохраняются в S3 хранилище
-
 ## Настройка резервной копии при добавлении проекта через helmfile
 
-### Создайте файл values и настройте в нем переменные
+### Создайте файл values в local-env и настройте в нем переменные
 ```bash
 extraConfigMapEnvVars:
   PG_HOST: "postgresql"
@@ -48,6 +20,7 @@ extraConfigMapEnvVars:
   AWS_SECRET_ACCESS_KEY: "rootPassword"
   AWS_BUCKET_NAME: "pelican-db-backup"
   AWS_HOST: "http://minio-s3:9000"
+  SCHEDULE: "*/2 * * * *"
 ```
 
 ## Восстановление из резервной копии
