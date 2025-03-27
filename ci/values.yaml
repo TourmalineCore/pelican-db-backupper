@@ -1,5 +1,6 @@
 # Here you can find docs bitnami/nginx chart https://github.com/bitnami/charts/blob/main/bitnami/nginx/README.md
 
+replicaCount: 0
 
 # 1000m means 100% of processor time 
 # 1m means 0.1% of processor time.
