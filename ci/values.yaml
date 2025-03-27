@@ -85,6 +85,12 @@ extraDeploy:
               containers:
                 - name: pgsql-backup-cron
                   image: ghcr.io/tourmalinecore/pelican-db-backupper:latest
+                  resources:
+                    limits:
+                      memory: 256Mi
+                    requests:
+                      cpu: 100m
+                      memory: 128Mi
                   env:
                     - name: PG_HOST
                       value: {{ .Values.extraConfigMapEnvVars.PG_HOST }}
