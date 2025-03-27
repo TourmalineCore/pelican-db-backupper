@@ -16,7 +16,7 @@ jobs:
       packages: write
       contents: read
 
-steps:
+    steps:
       - name: Check out the repo
         uses: actions/checkout@v4
         # multi-platform build configured using this https://docs.docker.com/build/ci/github-actions/multi-platform/
