@@ -14,11 +14,10 @@ replicaCount: 0
 # if pod uses more resources than limits in spite of the reason kube-system will perform a forced restart
 resources:
   limits:
-    cpu: 500m
-    memory: 1Gi
+    memory: 256Mi
   requests:
-    cpu: 200m
-    memory: 512Mi
+    cpu: 100m
+    memory: 128Mi
 
 livenessProbe:
   enabled: false
