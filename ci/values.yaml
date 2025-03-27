@@ -2,17 +2,6 @@
 
 replicaCount: 0
 
-# 1000m means 100% of processor time 
-# 1m means 0.1% of processor time.
-# at start pod is being allocated with resources from requests, if it needs more consumption can grow until limits.
-# if pod uses more resources than limits in spite of the reason kube-system will perform a forced restart
-resources:
-  limits:
-    memory: 256Mi
-  requests:
-    cpu: 100m
-    memory: 128Mi
-
 livenessProbe:
   enabled: false
 
@@ -79,6 +68,10 @@ extraDeploy:
               containers:
                 - name: pgsql-backup-cron
                   image: ghcr.io/tourmalinecore/pelican-db-backupper:latest
+                  # 1000m means 100% of processor time 
+                  # 1m means 0.1% of processor time.
+                  # at start pod is being allocated with resources from requests, if it needs more consumption can grow until limits.
+                  # if pod uses more resources than limits in spite of the reason kube-system will perform a forced restart
                   resources:
                     limits:
                       memory: 256Mi
