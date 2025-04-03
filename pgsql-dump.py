@@ -2,8 +2,6 @@ import os
 import boto3
 from datetime import datetime
 
-os.environ["AWS_REQUEST_CHECKSUM_CALCULATION"] = "when_required"
-os.environ["AWS_RESPONSE_CHECKSUM_VALIDATION"] = "when_required"
 
 def main():
     os.system('pg_dump -h $PG_HOST -U $PG_USER --encoding UTF8 --format plain $PG_DATABASE > pgsql.sql')
