@@ -8,7 +8,7 @@ RUN apk --update add \
     python3 \
     py3-pip \
     && pip3 install --upgrade pip \
-    && pip3 install awscli
+    && pip3 install awscli==1.32.0
 
-RUN pip install boto3
+RUN pip install boto3==1.35.41
 CMD ["python", "pgsql-dump.py"]
