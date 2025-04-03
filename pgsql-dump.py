@@ -2,6 +2,9 @@ import os
 import boto3
 from datetime import datetime
 
+os.environ["AWS_REQUEST_CHECKSUM_CALCULATION"] = "when_required"
+os.environ["AWS_RESPONSE_CHECKSUM_VALIDATION"] = "when_required"
+
 def main():
     os.system('pg_dump -h $PG_HOST -U $PG_USER --encoding UTF8 --format plain $PG_DATABASE > pgsql.sql')
 
@@ -18,7 +21,7 @@ def upload_to_s3(source_path, destination_filename):
         's3',
         aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
         aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
-        endpoint_url=os.getenv('AWS_HOST'),
+        endpoint_url=os.getenv('AWS_HOST')
     )
 
     bucket_name = os.getenv('AWS_BUCKET_NAME')
