@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: pgsql-backup-cron-test
+  namespace: local
+spec:
+  schedule: "{{ .Values.extraConfigMapEnvVars.SCHEDULE }}"
+  successfulJobsHistoryLimit: 2
+  concurrencyPolicy: Replace
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: pgsql-backup-cron-test
+              image: ghcr.io/tourmalinecore/pelican-db-backupper:sha-abd64a806d0f557a703661c8ff0a328348e25415
+              # image: ghcr.io/tourmalinecore/pelican-db-backupper:latest
+                  # 1000m means 100% of processor time 
+                  # 1m means 0.1% of processor time.
+                  # at start pod is being allocated with resources from requests, if it needs more consumption can grow until limits.
+                  # if pod uses more resources than limits in spite of the reason kube-system will perform a forced restart
+              resources:
+                limits:
+                  memory: 256Mi
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+              env:
+                - name: PG_HOST
+                  value: {{ .Values.extraConfigMapEnvVars.PG_HOST }}
+                - name: PGPASSWORD
+                  value: {{ .Values.extraConfigMapEnvVars.PGPASSWORD }}
+                - name: PG_USER
+                  value: {{ .Values.extraConfigMapEnvVars.PG_USER }}
+                - name: PG_DATABASE
+                  value: {{ .Values.extraConfigMapEnvVars.PG_DATABASE }}
+                - name: AWS_ACCESS_KEY_ID
+                  value: {{ .Values.extraConfigMapEnvVars.AWS_ACCESS_KEY_ID }}
+                - name: AWS_SECRET_ACCESS_KEY
+                  value: {{ .Values.extraConfigMapEnvVars.AWS_SECRET_ACCESS_KEY }}
+                - name: AWS_BUCKET_NAME
+                  value: {{ .Values.extraConfigMapEnvVars.AWS_BUCKET_NAME }}
+                - name: AWS_HOST
+                  value: {{ .Values.extraConfigMapEnvVars.AWS_HOST }}
+              imagePullPolicy: IfNotPresent
