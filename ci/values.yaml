@@ -95,6 +95,4 @@ extraDeploy:
                       value: {{ .Values.extraConfigMapEnvVars.AWS_BUCKET_NAME }}
                     - name: AWS_HOST
                       value: {{ .Values.extraConfigMapEnvVars.AWS_HOST }}
-                    - name: AWS_REGION
-                      value: {{ .Values.extraConfigMapEnvVars.AWS_REGION }}
                   imagePullPolicy: Always
