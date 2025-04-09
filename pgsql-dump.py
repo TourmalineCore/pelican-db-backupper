@@ -4,16 +4,16 @@ from datetime import datetime
 
 
 def main():
-    os.system('pg_dump -h $PG_HOST -U $PG_USER --encoding UTF8 --format plain $PG_DATABASE > pgsql.sql')
 
-    if os.path.exists('pgsql.sql'):
-        source_path = 'pgsql.sql'
+    filename = 'pgsql.sql' + '_' + datetime.strftime(datetime.utcnow(), "%Y.%m.%d.%H:%M:%S") + 'UTC' + '.backup'
 
-        destination_filename = source_path + '_' + datetime.strftime(datetime.utcnow(), "%Y.%m.%d.%H:%M:%S") + 'UTC' + '.backup'
+    os.system('pg_dump -h $PG_HOST -U $PG_USER --encoding UTF8 --format plain $PG_DATABASE > %s' %(filename))
 
-        upload_to_s3(source_path, destination_filename)
+    if os.path.exists(filename):
+        upload_to_s3(filename)
+        os.remove(filename)
 
-def upload_to_s3(source_path, destination_filename):
+def upload_to_s3(filename):
 
     s3 = boto3.client(
         's3',
@@ -25,8 +25,8 @@ def upload_to_s3(source_path, destination_filename):
     bucket_name = os.getenv('AWS_BUCKET_NAME')
 
 
-    with open(source_path, "rb") as data:
-        s3.upload_fileobj(data, bucket_name, destination_filename)
+    with open(filename, "rb") as data:
+        s3.upload_fileobj(data, bucket_name, filename)
 
 if __name__ == '__main__':
 
