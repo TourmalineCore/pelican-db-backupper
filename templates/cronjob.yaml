@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: pgsql-backup-cron-test
+  name: pgsql-backup-cron
   namespace: local
 spec:
   schedule: "{{ .Values.extraConfigMapEnvVars.SCHEDULE }}"
@@ -13,7 +13,7 @@ spec:
         spec:
           restartPolicy: OnFailure
           containers:
-            - name: pgsql-backup-cron-test
+            - name: pgsql-backup-cron
               image: ghcr.io/tourmalinecore/pelican-db-backupper:{{ .Values.extraConfigMapEnvVars.IMAGE_TAG }}
               # image: ghcr.io/tourmalinecore/pelican-db-backupper:latest
                   # 1000m means 100% of processor time 
