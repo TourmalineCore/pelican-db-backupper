@@ -14,7 +14,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: pgsql-backup-cron-test
-              image: ghcr.io/tourmalinecore/pelican-db-backupper:sha-abd64a806d0f557a703661c8ff0a328348e25415
+              image: ghcr.io/tourmalinecore/pelican-db-backupper:{{ .Values.extraConfigMapEnvVars.IMAGE_TAG }}
               # image: ghcr.io/tourmalinecore/pelican-db-backupper:latest
                   # 1000m means 100% of processor time 
                   # 1m means 0.1% of processor time.
