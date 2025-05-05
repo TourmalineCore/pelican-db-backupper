@@ -5,10 +5,9 @@ from datetime import datetime
 
 def main():
 
-    filename = 'pgsql.sql' + '_' + datetime.strftime(datetime.utcnow(), "%Y.%m.%d.%H:%M:%S") + 'UTC' + '.backup'
+    filename = 'pelican-local-env-db-' + datetime.strftime(datetime.utcnow(), "%Y-%m-%dT%H-%M-%S") + '.backup'
 
     os.system('pg_dump -h $PG_HOST -U $PG_USER --encoding UTF8 --format plain $PG_DATABASE > %s' %(filename))
-
     if os.path.exists(filename):
         upload_to_s3(filename)
         os.remove(filename)
