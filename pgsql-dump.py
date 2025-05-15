@@ -5,7 +5,7 @@ from datetime import datetime
 
 def main():
 
-    backup_filename = os.getenv('PELICAN_backup_filename_PREFIX') + '-' + datetime.strftime(datetime.utcnow(), "%Y-%m-%dT%H-%M-%S") + '.backup'
+    backup_filename = os.getenv('PELICAN_FILENAME_PREFIX') + '-' + datetime.strftime(datetime.utcnow(), "%Y-%m-%dT%H-%M-%S") + '.backup'
 
     os.system('pg_dump -h $PG_HOST -U $PG_USER --encoding UTF8 --format plain $PG_DATABASE > %s' %(backup_filename))
 
