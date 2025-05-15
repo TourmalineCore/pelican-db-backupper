@@ -17,7 +17,13 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: {{ .Release.Name }}
-              image: ghcr.io/tourmalinecore/pelican-db-backupper:{{ .Values.image.tag }}
+              image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
+              resources:
+                limits:
+                  memory: {{ .Values.resources.limits.memory }}
+                requests:
+                  cpu: {{ .Values.resources.requests.cpu }}
+                  memory: {{ .Values.resources.requests.memory }}
               env:
                 - name: PELICAN_FILENAME_PREFIX
                   value: {{ .Values.extraConfigMapEnvVars.PELICAN_FILENAME_PREFIX }}
@@ -37,4 +43,4 @@ spec:
                   value: {{ .Values.extraConfigMapEnvVars.DESTINATION_AWS_BUCKET_NAME }}
                 - name: DESTINATION_AWS_HOST
                   value: {{ .Values.extraConfigMapEnvVars.DESTINATION_AWS_HOST }}
-              imagePullPolicy: IfNotPresent
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
