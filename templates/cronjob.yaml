@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  schedule: "{{ .Values.extraConfigMapEnvVars.SCHEDULE }}"
+  # How many completed jobs should be kept
+  successfulJobsHistoryLimit: 1
+  # We use concurrencyPolicy: Forbid to make sure that a new cronjob doesn't kill a previously started cronjob before it's completed
+  # Here you can read about concurrencyPolicy: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency-policy
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: {{ .Release.Name }}
+              image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
+              resources:
+                limits:
+                  memory: {{ .Values.resources.limits.memory }}
+                requests:
+                  cpu: {{ .Values.resources.requests.cpu }}
+                  memory: {{ .Values.resources.requests.memory }}
+              env:
+                - name: PELICAN_FILENAME_PREFIX
+                  value: {{ .Values.extraConfigMapEnvVars.PELICAN_FILENAME_PREFIX }}
+                - name: PG_HOST
+                  value: {{ .Values.extraConfigMapEnvVars.PG_HOST }}
+                - name: PGPASSWORD
+                  value: {{ .Values.extraConfigMapEnvVars.PGPASSWORD }}
+                - name: PG_USER
+                  value: {{ .Values.extraConfigMapEnvVars.PG_USER }}
+                - name: PG_DATABASE
+                  value: {{ .Values.extraConfigMapEnvVars.PG_DATABASE }}
+                - name: DESTINATION_AWS_ACCESS_KEY_ID
+                  value: {{ .Values.extraConfigMapEnvVars.DESTINATION_AWS_ACCESS_KEY_ID }}
+                - name: DESTINATION_AWS_SECRET_ACCESS_KEY
+                  value: {{ .Values.extraConfigMapEnvVars.DESTINATION_AWS_SECRET_ACCESS_KEY }}
+                - name: DESTINATION_AWS_BUCKET_NAME
+                  value: {{ .Values.extraConfigMapEnvVars.DESTINATION_AWS_BUCKET_NAME }}
+                - name: DESTINATION_AWS_HOST
+                  value: {{ .Values.extraConfigMapEnvVars.DESTINATION_AWS_HOST }}
+              imagePullPolicy: {{ .Values.image.pullPolicy }}

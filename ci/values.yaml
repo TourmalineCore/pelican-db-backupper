@@ -1,0 +1,14 @@
+image:
+  registry: ghcr.io
+  repository: tourmalinecore/pelican-db-backupper
+  tag: ""
+  pullPolicy: Always
+
+resources:
+  limits:
+    memory: 512Mi
+  requests:
+    cpu: 1m
+    memory: 256Mi
+
+extraConfigMapEnvVars:
