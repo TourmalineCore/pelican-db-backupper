@@ -1,7 +1,6 @@
 image:
   registry: ghcr.io
   repository: tourmalinecore/pelican-db-backupper
-  tag: ""
   pullPolicy: Always
 
 resources:
