@@ -4,7 +4,7 @@ metadata:
   name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
 spec:
-  schedule: "{{ .Values.extraConfigMapEnvVars.SCHEDULE }}"
+  schedule: "{{ .Values.extraConfigMapEnvVars.BACKUP_SCHEDULE }}"
   # How many completed jobs should be kept
   successfulJobsHistoryLimit: 1
   # We use concurrencyPolicy: Forbid to make sure that a new cronjob doesn't kill a previously started cronjob before it's completed
@@ -28,20 +28,20 @@ spec:
               env:
                 - name: DB_BACKUP_FILENAME_PREFIX
                   value: {{ .Values.extraConfigMapEnvVars.DB_BACKUP_FILENAME_PREFIX }}
-                - name: PG_HOST
-                  value: {{ .Values.extraConfigMapEnvVars.PG_HOST }}
+                - name: DATABASE_HOST
+                  value: {{ .Values.extraConfigMapEnvVars.DATABASE_HOST }}
                 - name: PGPASSWORD
-                  value: {{ .Values.extraConfigMapEnvVars.PGPASSWORD }}
-                - name: PG_USER
-                  value: {{ .Values.extraConfigMapEnvVars.PG_USER }}
-                - name: PG_DATABASE
-                  value: {{ .Values.extraConfigMapEnvVars.PG_DATABASE }}
-                - name: DESTINATION_DB_AWS_ACCESS_KEY_ID
-                  value: {{ .Values.extraConfigMapEnvVars.DESTINATION_DB_AWS_ACCESS_KEY_ID }}
-                - name: DESTINATION_DB_AWS_SECRET_ACCESS_KEY
-                  value: {{ .Values.extraConfigMapEnvVars.DESTINATION_DB_AWS_SECRET_ACCESS_KEY }}
-                - name: DESTINATION_DB_AWS_BUCKET_NAME
-                  value: {{ .Values.extraConfigMapEnvVars.DESTINATION_DB_AWS_BUCKET_NAME }}
-                - name: DESTINATION_DB_AWS_HOST
-                  value: {{ .Values.extraConfigMapEnvVars.DESTINATION_DB_AWS_HOST }}
+                  value: {{ .Values.extraConfigMapEnvVars.DATABASE_PASSWORD }}
+                - name: DATABASE_USERNAME
+                  value: {{ .Values.extraConfigMapEnvVars.DATABASE_USERNAME }}
+                - name: DATABASE_NAME
+                  value: {{ .Values.extraConfigMapEnvVars.DATABASE_NAME }}
+                - name: BACKUP_AWS_ACCESS_KEY_ID
+                  value: {{ .Values.extraConfigMapEnvVars.BACKUP_AWS_ACCESS_KEY_ID }}
+                - name: BACKUP_AWS_SECRET_ACCESS_KEY
+                  value: {{ .Values.extraConfigMapEnvVars.BACKUP_AWS_SECRET_ACCESS_KEY }}
+                - name: BACKUP_AWS_BUCKET_NAME
+                  value: {{ .Values.extraConfigMapEnvVars.BACKUP_AWS_BUCKET_NAME }}
+                - name: BACKUP_AWS_HOST
+                  value: {{ .Values.extraConfigMapEnvVars.BACKUP_AWS_HOST }}
               imagePullPolicy: {{ .Values.image.pullPolicy }}
