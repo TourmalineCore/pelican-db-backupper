@@ -38,10 +38,10 @@ spec:
                   value: {{ .Values.extraConfigMapEnvVars.DATABASE_NAME }}
                 - name: BACKUP_AWS_ACCESS_KEY_ID
                   value: {{ .Values.extraConfigMapEnvVars.BACKUP_AWS_ACCESS_KEY_ID }}
-                - name: BACKUP_AWS_SECRET_ACCESS_KEY
-                  value: {{ .Values.extraConfigMapEnvVars.BACKUP_AWS_SECRET_ACCESS_KEY }}
-                - name: BACKUP_AWS_BUCKET_NAME
-                  value: {{ .Values.extraConfigMapEnvVars.BACKUP_AWS_BUCKET_NAME }}
-                - name: BACKUP_AWS_HOST
-                  value: {{ .Values.extraConfigMapEnvVars.BACKUP_AWS_HOST }}
+                - name: BACKUP_AWS_ACCESS_SECRET_KEY
+                  value: {{ .Values.extraConfigMapEnvVars.BACKUP_AWS_ACCESS_SECRET_KEY }}
+                - name: BACKUP_AWS_BUCKET
+                  value: {{ .Values.extraConfigMapEnvVars.BACKUP_AWS_BUCKET }}
+                - name: BACKUP_AWS_ENDPOINT
+                  value: {{ .Values.extraConfigMapEnvVars.BACKUP_AWS_ENDPOINT }}
               imagePullPolicy: {{ .Values.image.pullPolicy }}

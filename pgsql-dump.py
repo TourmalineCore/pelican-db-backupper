@@ -22,11 +22,11 @@ def upload_to_s3(backup_filename):
     s3 = boto3.client(
         's3',
         aws_access_key_id=os.getenv('BACKUP_AWS_ACCESS_KEY_ID'),
-        aws_secret_access_key=os.getenv('BACKUP_AWS_SECRET_ACCESS_KEY'),
-        endpoint_url=os.getenv('BACKUP_AWS_HOST'),
+        aws_secret_access_key=os.getenv('BACKUP_AWS_ACCESS_SECRET_KEY'),
+        endpoint_url=os.getenv('BACKUP_AWS_ENDPOINT'),
     )
 
-    bucket_name = os.getenv('BACKUP_AWS_BUCKET_NAME')
+    bucket_name = os.getenv('BACKUP_AWS_BUCKET')
 
 
     with open(backup_filename, "rb") as data:
