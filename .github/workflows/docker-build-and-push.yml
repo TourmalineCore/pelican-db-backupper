@@ -63,11 +63,9 @@ jobs:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_PASSWORD: admin
           POSTGRES_USER: postgres
-          POSTGRES_DB: testdb
-          POSTGRES_HOST_AUTH_METHOD: trust
-
+          POSTGRES_DB: pelican_db
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
@@ -89,15 +87,15 @@ jobs:
       - name: Configure AWS credentials for testing
         run: |
           mkdir -p ~/.aws
-          echo "[default]\naws_access_key_id = test\naws_secret_access_key = test" > ~/.aws/credentials
+          echo "[default]\naws_access_key_id = admin\naws_secret_access_key = rootPassword" > ~/.aws/credentials
 
       - name: Run local S3 server (minio)
         run: |
           docker run -d -p 9000:9000 -p 9090:9090 --name minio \
-            -e "MINIO_ROOT_USER=test" \
-            -e "MINIO_ROOT_PASSWORD=testtest" \
+            -e "MINIO_ROOT_USER=admin" \
+            -e "MINIO_ROOT_PASSWORD=rootPassword" \
             minio/minio server /data --console-address ":9090"
-            echo "Waiting for MinIO to be ready..."
+          echo "Waiting for MinIO to be ready..."
 
           until curl -s http://localhost:9000/minio/health/live; do
             sleep 1
@@ -105,21 +103,25 @@ jobs:
 
       - name: Wait for services to be ready
         run: |
-          docker exec minio mc alias set local http://localhost:9000 test testtest
-          docker exec minio mc mb local/test-bucket
+          docker exec minio mc alias set local http://localhost:9000 admin rootPassword
+          docker exec minio mc mb local/pelican-backups
           sleep 10
 
       - name: Run e2e test
         env:
-          DB_BACKUPS_FILENAME_PREFIX: test-backup
+          DB_BACKUPS_FILENAME_PREFIX: pelican-local-env-db
           DATABASE_HOST: localhost
           DATABASE_USERNAME: postgres
-          DATABASE_PASSWORD: postgres
-          DATABASE_NAME: testdb
-          DESTINATION_DB_AWS_ACCESS_KEY_ID: test
-          DESTINATION_DB_AWS_SECRET_ACCESS_KEY: testtest
-          DESTINATION_DB_AWS_BUCKET_NAME: test-bucket
+          DATABASE_PASSWORD: admin
+          DATABASE_NAME: pelican_db
+          DESTINATION_DB_AWS_ACCESS_KEY_ID: admin
+          DESTINATION_DB_AWS_SECRET_ACCESS_KEY: rootPassword
+          DESTINATION_DB_AWS_BUCKET_NAME: pelican-backups
           DESTINATION_DB_AWS_ENDPOINT: http://localhost:9000
+          PGPASSWORD: admin
         run: |
+          psql -h localhost -U postgres -d pelican_db -c "CREATE TABLE test_table (id serial PRIMARY KEY, data text);"
+          psql -h localhost -U postgres -d pelican_db -c "INSERT INTO test_table (data) VALUES ('test data');"
+          
           python pgsql-dump.py
           python -m pytest -v e2e_test.py
