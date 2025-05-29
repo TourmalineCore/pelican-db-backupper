@@ -95,6 +95,10 @@ jobs:
             -e "MINIO_ROOT_USER=test" \
             -e "MINIO_ROOT_PASSWORD=testtest" \
             minio/minio server /data --console-address ":9090"
+            echo "Waiting for MinIO to be ready..."
+          until curl -s http://localhost:9000/minio/health/live; do
+            sleep 1
+          done
 
       - name: Wait for services to be ready
         run: |
