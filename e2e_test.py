@@ -4,7 +4,6 @@ from datetime import datetime
 import time
 
 def test_backup_file_created_in_s3():
-    # Configure S3 client
     s3 = boto3.client(
         's3',
         aws_access_key_id=os.getenv('DESTINATION_DB_AWS_ACCESS_KEY_ID'),
@@ -14,10 +13,8 @@ def test_backup_file_created_in_s3():
 
     bucket_name = os.getenv('DESTINATION_DB_AWS_BUCKET_NAME')
     
-    # List objects in the bucket
     response = s3.list_objects_v2(Bucket=bucket_name)
     
-    # Check that at least one backup file exists
     assert 'Contents' in response, "No files found in S3 bucket"
     
     # Check that the backup file has the correct prefix
@@ -32,7 +29,6 @@ def test_backup_file_created_in_s3():
         assert file_size > 0, f"Backup file {backup_file['Key']} is empty"
 
 def test_database_backup_content():
-    # Configure S3 client
     s3 = boto3.client(
         's3',
         aws_access_key_id=os.getenv('DESTINATION_DB_AWS_ACCESS_KEY_ID'),
