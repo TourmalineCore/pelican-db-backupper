@@ -1,0 +1,161 @@
+name: CronJob E2E Test
+
+on:
+  push:
+    branches:
+      - test/e2e-test
+
+jobs:
+  test-cronjob:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install boto3 kubernetes
+
+      - name: Create kind cluster
+        uses: helm/kind-action@v1.8.0
+        with:
+          install_kubectl: true
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: admin
+          aws-secret-access-key: rootPassword
+          aws-region: us-east-1
+
+      - name: Create S3 bucket for testing
+        run: |
+          aws s3api create-bucket --bucket test-backups-bucket --endpoint-url http://minio-s3:9000
+
+      - name: Deploy test PostgreSQL
+        run: |
+          kubectl apply -f - <<EOF
+          apiVersion: v1
+          kind: Pod
+          metadata:
+            name: postgres-test
+            labels:
+              app: postgres-test
+          spec:
+            containers:
+            - name: postgres
+              image: postgres:13
+              env:
+              - name: POSTGRES_PASSWORD
+                value: "admin"
+              - name: POSTGRES_USER
+                value: "postgres"
+              - name: POSTGRES_DB
+                value: "pelican_db"
+              ports:
+              - containerPort: 5432
+          ---
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: postgres-service
+          spec:
+            selector:
+              app: postgres-test
+            ports:
+              - protocol: TCP
+                port: 5432
+                targetPort: 5432
+          EOF
+
+          # Wait for PostgreSQL to be ready
+          kubectl wait --for=condition=ready pod/postgres-test --timeout=120s
+
+      - name: Deploy CronJob
+        run: |
+          kubectl apply -f - <<EOF
+          apiVersion: batch/v1
+          kind: CronJob
+          metadata:
+            name: backup-cronjob-test
+          spec:
+            schedule: "*/5 * * * *"  # Every 5 minutes for testing
+            successfulJobsHistoryLimit: 1
+            concurrencyPolicy: Forbid
+            jobTemplate:
+              spec:
+                template:
+                  spec:
+                    restartPolicy: OnFailure
+                    containers:
+                    - name: backup-job
+                      image: your-backup-image:test
+                      env:
+                        - name: DB_BACKUPS_FILENAME_PREFIX
+                          value: "pelican-local-env-db"
+                        - name: DATABASE_HOST
+                          value: "postgresql"
+                        - name: PGPASSWORD
+                          value: "admin"
+                        - name: DATABASE_USERNAME
+                          value: "postgres"
+                        - name: DATABASE_NAME
+                          value: "pelican_db"
+                        - name: DESTINATION_DB_AWS_ACCESS_KEY_ID
+                          value: "admin"
+                        - name: DESTINATION_DB_AWS_SECRET_ACCESS_KEY
+                          value: "rootPassword"
+                        - name: DESTINATION_DB_AWS_BUCKET_NAME
+                          value: "pelican-local-env"
+                        - name: DESTINATION_DB_AWS_ENDPOINT
+                          value: "http://minio-s3:9000"
+          EOF
+
+      - name: Trigger CronJob manually
+        run: |
+          # Create manual job from the cronjob template
+          kubectl create job --from=cronjob/backup-cronjob-test backup-manual-test
+
+      - name: Wait for job completion
+        run: |
+          kubectl wait --for=condition=complete job/backup-manual-test --timeout=120s
+
+      - name: Verify backup in S3
+        run: |
+          python - <<EOF
+          import os
+          import boto3
+          from datetime import datetime
+
+          s3 = boto3.client(
+              's3',
+              aws_access_key_id=admin,
+              aws_secret_access_key=rootPassword,
+              endpoint_url=http://minio-s3:9000,
+          )
+
+          bucket_name = 'pelican-local-env'
+          response = s3.list_objects_v2(Bucket=bucket_name)
+          
+          if 'Contents' not in response:
+              raise Exception("No backups found in S3 bucket")
+          
+          print("Found backups:")
+          for obj in response['Contents']:
+              print(f"- {obj['Key']}")
+          EOF
+
+      - name: Cleanup
+        if: always()
+        run: |
+          kubectl delete cronjob backup-cronjob-test
+          kubectl delete job backup-manual-test
+          kubectl delete service postgres-service
+          kubectl delete pod postgres-test
+          aws s3 rb s3://pelican-local-env --force --endpoint-url http://minio-s3:9000
