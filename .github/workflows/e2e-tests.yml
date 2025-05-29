@@ -3,7 +3,7 @@ name: Run E2E tests
 on: 
   push:
     branches:
-      - feature/*
+      - test/*
 
 jobs:
   # this is needed to wait for the new docker image to be build and published to the registry
