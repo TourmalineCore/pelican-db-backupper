@@ -65,3 +65,11 @@ def test_database_backup_content():
     
     if not ('CREATE DATABASE' in content or 'CREATE TABLE' in content):
         raise Exception("Backup file missing CREATE DATABASE or CREATE TABLE statements")
+
+def run_tests():
+    test_backup_file_created_in_s3()
+    test_database_backup_content()
+    print("All tests passed!")
+
+if __name__ == "__main__":
+    run_tests()
