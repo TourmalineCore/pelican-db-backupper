@@ -59,6 +59,8 @@ def test_database_backup_content():
     
     with open(tmp_file, 'r') as f:
         content = f.read()
+
+    print(content[:200])
         
 
     if 'PostgreSQL database dump' not in content:
