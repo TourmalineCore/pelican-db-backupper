@@ -60,8 +60,6 @@ def test_database_backup_content():
     with open(tmp_file, 'r') as f:
         content = f.read()
 
-    print(content)
-
     if 'PostgreSQL database dump' not in content:
         raise Exception("Content is not a valid PostgreSQL dump")
     
