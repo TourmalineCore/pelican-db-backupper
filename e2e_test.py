@@ -65,5 +65,5 @@ def test_database_backup_content():
     if 'PostgreSQL database dump' not in content:
         raise Exception("Content is not a valid PostgreSQL dump")
     
-    if 'CREATE DATABASE' not in content or 'CREATE TABLE' not in content:
+    if not ('CREATE DATABASE' in content or 'CREATE TABLE' in content):
         raise Exception("Backup file missing CREATE DATABASE or CREATE TABLE statements")
