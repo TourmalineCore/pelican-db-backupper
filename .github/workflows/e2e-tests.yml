@@ -40,12 +40,9 @@ jobs:
 
       # https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html#cli-configure-files-methods
       - name: Configure AWS credentials
-        env:
-          AWS_ACCESS_KEY_ID: ${{ Values.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ Values.AWS_SECRET_ACCESS_KEY }}
         run: |
           mkdir -p ~/.aws
-          echo "[default]\naws_access_key_id="$AWS_ACCESS_KEY_ID"\naws_secret_access_key="$AWS_SECRET_ACCESS_KEY"" > ~/.aws/credentials
+          echo "[default]\naws_access_key_id=admin\naws_secret_access_key=rootPassword" > ~/.aws/credentials
 
       - name: Start MinIO server
         run: |
