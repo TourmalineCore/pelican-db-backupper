@@ -37,6 +37,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install boto3
+          sudo apt -get install -y postgresql-client-17
 
       # https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html#cli-configure-files-methods
       - name: Configure AWS credentials
