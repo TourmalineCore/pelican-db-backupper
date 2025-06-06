@@ -24,6 +24,8 @@
 *.tmproj
 .vscode/
 
+# pelican-db-backupper
 *.md
 ci/
 Dockerfile
+*.py
