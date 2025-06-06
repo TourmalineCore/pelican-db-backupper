@@ -4,7 +4,9 @@
 .DS_Store
 # Common VCS dirs
 .git/
+.github/
 .gitignore
+.gitattributes
 .bzr/
 .bzrignore
 .hg/
@@ -23,3 +25,5 @@
 .vscode/
 
 *.md
+ci/
+Dockerfile
