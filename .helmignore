@@ -4,7 +4,9 @@
 .DS_Store
 # Common VCS dirs
 .git/
+.github/
 .gitignore
+.gitattributes
 .bzr/
 .bzrignore
 .hg/
@@ -21,3 +23,9 @@
 .idea/
 *.tmproj
 .vscode/
+
+# pelican-db-backupper
+*.md
+ci/
+Dockerfile
+*.py
