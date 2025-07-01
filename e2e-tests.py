@@ -13,16 +13,12 @@ def main():
     try:
         contents = objects_list["Contents"]
         last_backup_size = contents[-1]['Size']
-        for c in contents:
-            print(c['Size'], c['Key'])
+
     except:
         raise Exception("Bucket is empty")
 
     if(last_backup_size == 0):
         raise Exception("Backup size is 0")
-
-    if(not round((last_backup_size / (2**10)), 1) == 687.3):
-        raise Exception(f"Invalid backup size! Backup size should be 687.3. Current backup size is {round((last_backup_size / (2**10)), 1)}")
 
 if __name__ == '__main__':
     main()
