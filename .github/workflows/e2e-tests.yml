@@ -1,4 +1,4 @@
-name: Run tests
+name: Run E2E tests
 
 # ToDo should it be triggered only as part of an open PR?
 # currently it triggers for any commit in a FB
@@ -47,11 +47,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4 
 
-      - name: sleep 90 seconds
-        run: sleep 90
+        # wait 60 seconds to make sure that backup was created
+      - name: wait 60 seconds
+        run: sleep 60
 
-      - name: run test
-        run: python test.py
+      - name: run e2e tests
+        run: python e2e-tests.py
         env: 
           DESTINATION_DB_AWS_ACCESS_KEY_ID: admin
           DESTINATION_DB_AWS_SECRET_ACCESS_KEY: rootPassword
