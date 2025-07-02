@@ -9,15 +9,25 @@ def main():
         endpoint_url=os.getenv('DB_AWS_ENDPOINT')
     )
 
-    objects_list = s3.list_objects_v2(Bucket="pelican-backups")
+    objects_list = s3.list_objects_v2(Bucket=os.getenv('DB_AWS_BUCKET_NAME'))
+
     try:
         contents = objects_list["Contents"]
-        last_backup_size = contents[-1]['Size']
 
     except:
         raise Exception("Bucket is empty")
 
-    if(last_backup_size == 0):
+    backups = []
+
+    for content in contents:
+        if content["Key"].startswith(os.getenv('DB_BACKUPS_FILENAME_PREFIX')):
+            backups.append(content)
+
+    if len(backups) == 0:
+        raise Exception("No database backups found")
+
+
+    if backups[-1]["Size"] == 0:
         raise Exception("Backup size is 0")
 
 if __name__ == '__main__':

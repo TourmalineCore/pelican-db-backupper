@@ -57,3 +57,6 @@ jobs:
           DB_AWS_ACCESS_KEY_ID: admin
           DB_AWS_SECRET_ACCESS_KEY: rootPassword
           DB_AWS_ENDPOINT: http://minio-s3.localhost:40110
+          DB_AWS_BUCKET_NAME: pelican-backups
+          DB_BACKUPS_FILENAME_PREFIX: pelican-local-env-db
+          
