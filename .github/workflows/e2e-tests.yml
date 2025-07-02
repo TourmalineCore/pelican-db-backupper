@@ -28,8 +28,9 @@ jobs:
         uses: devcontainers/ci@v0.3
         with:
           runCmd: |
-            # we need to override "latest" image tag of ui inside local-env to run e2e against the current commit ui version and not against latest from master
+            # we need to override "latest" image tag of backupper inside local-env to run e2e against the current commit version and not against latest from master
             sed -i "0,/tag:.*/s//tag: \"sha-${{ github.sha }}\"/" deploy/values-pelican-db-backupper.yaml.gotmpl
+            # we need to overrive backup schedule of backupper inside local-env to run cronjob every minute 
             sed -i "0,/BACKUPS_SCHEDULE:.*/s//BACKUPS_SCHEDULE: \"*\/1 * * * *\"/" deploy/values-pelican-db-backupper.yaml.gotmpl
             kind create cluster --name pelican --config kind-local-config.yaml --kubeconfig ./.pelican-cluster-kubeconfig
             
