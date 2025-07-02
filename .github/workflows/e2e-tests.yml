@@ -47,11 +47,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4 
 
-        # wait 60 seconds to make sure that backup was created
-      - name: wait 60 seconds
+        # Wait 60 seconds to make sure that backup was created
+      - name: Wait 60 seconds
         run: sleep 60
 
-      - name: run e2e tests
+      - name: Run E2E tests
         run: python e2e-tests.py
         env: 
           DB_AWS_ACCESS_KEY_ID: admin
