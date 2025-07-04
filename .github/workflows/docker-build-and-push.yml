@@ -5,7 +5,8 @@ on:
     branches:
       - master
       - feature/*
-  pull_request: 
+  pull_request:
+  # to allow to wait for a docker image to be published to proceed in another workflow
   workflow_call:
 
 jobs:
